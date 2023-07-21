@@ -1,0 +1,35 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo');
+
+//@font-face {
+//    font-family: 'cairo';
+//    src: url('/public/fonts/mine/cairo-variablefont_wght-webfont.woff2') format('woff2'),
+//    url('/public/fonts/mine/cairo-variablefont_wght-webfont.woff') format('woff');
+//    font-weight: normal;
+//    font-style: normal;
+//}
+//
+//@font-face {
+//    font-family: 'nunito';
+//    src: url('/public/fonts/mine/nunito-variablefont_wght-webfont.woff2') format('woff2'),
+//    url('/public/fonts/mine/nunito-variablefont_wght-webfont.woff') format('woff');
+//    font-weight: normal;
+//    font-style: normal;
+//}
+//@import 'public/fonts/mine/boxicons.min.css';
+
+// Variables
+@import 'variables';
+
+@import 'boxicons';
+
+
+// Bootstrap
+@import 'bootstrap';
+
+@import "adminlte.components.css";
+@import "adminlte.core.css";
+
+@import "fb";
