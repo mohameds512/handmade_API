@@ -21,14 +21,16 @@ Route::group(['prefix' => 'flutter' ], function () {
     Route::get('listUsers', [UsersController::class, 'index']);
     Route::post('register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
     Route::post('checkverifycode', [\App\Http\Controllers\Api\AuthController::class, 'verifyCode']);
+
     // Route::post('checkverifycodeReset', [\App\Http\Controllers\Api\AuthController::class, 'verifyCode_resetpassword']);
     Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
     Route::post('forgetPassword', [\App\Http\Controllers\Api\AuthController::class, 'forgetPassword']);
     Route::post('resetPassword', [\App\Http\Controllers\Api\AuthController::class, 'reset_Password']);
-    ////////////////////////////////category////////////////////////////
+    
     // 'middleware'=>['auth:api', 'json.response']
     Route::group(['prefix'=>'home'], function () {
         Route::post('get_all_data',[HomeController::class,'allData']);
+        
     });
     Route::group(['prefix'=>'category'], function () {
         Route::post('get_categories',[CategoryController::class,'index']);
@@ -36,8 +38,12 @@ Route::group(['prefix' => 'flutter' ], function () {
     });
     Route::group(['prefix'=>'item'], function () {
         Route::post('get_items',[ItemController::class,'index']);
+        Route::post('storeItem/{item?}',[ItemController::class,'storeItem']);
     });
 });
+
+Route::get('categories/image/{img}/{no_cache}', [CategoryController::class, 'categoriesImages'])->name('category_image');
+Route::get('items/image/{img}/{no_cache}', [ItemController::class, 'itemsImages'])->name('item_image');
 
 Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 
