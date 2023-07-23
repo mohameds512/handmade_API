@@ -38,6 +38,7 @@ Route::group(['prefix' => 'flutter' ], function () {
     });
     Route::group(['prefix'=>'item'], function () {
         Route::post('get_items',[ItemController::class,'index']);
+        Route::post('get_cat_items',[ItemController::class,'cat_items']);
         Route::post('storeItem/{item?}',[ItemController::class,'storeItem']);
     });
 });

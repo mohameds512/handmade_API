@@ -16,6 +16,14 @@ class ItemController extends Controller
         });
         return \success(['items'=>$items]);
     }
+    public function cat_items(Request $request){
+        return "dddddddddddddddddd";
+        $items = Item::where('category_id',$request->cat_id)->get()->transform(function($item){
+            $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            return $item;
+        });
+        return \success(['items'=>$items]);
+    }
 
     public function storeItem(Request $request,Item $item){
         if(!$item){
