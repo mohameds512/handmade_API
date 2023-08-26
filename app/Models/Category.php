@@ -16,7 +16,7 @@ class Category extends Model
     // public static $types = ['account','product'];
 
     protected $guarded;
-    // protected $casts = ['name' => 'json'];
+    protected $casts = ['name' => 'json'];
 
     // public function accounts()
     // {

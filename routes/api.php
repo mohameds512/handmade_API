@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Hr\UsersController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\ItemController;
+use App\Http\Controllers\Api\CartController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
@@ -36,11 +37,20 @@ Route::group(['prefix' => 'flutter' ], function () {
         Route::post('get_categories',[CategoryController::class,'index']);
         Route::post('storeCategory/{category?}',[CategoryController::class,'storeCategory']);
     });
+
     Route::group(['prefix'=>'item'], function () {
         Route::post('get_items',[ItemController::class,'index']);
         Route::post('get_cat_items',[ItemController::class,'cat_items']);
         Route::post('storeItem/{item?}',[ItemController::class,'storeItem']);
+        Route::post('AddRemoveFavorite',[ItemController::class,'AddRemoveFavorite']);
+        Route::post('getFavoritesItems',[ItemController::class,'getFavoritesItems']);
     });
+    
+    Route::group(['prefix'=>'cart'], function () {
+        Route::post('addToCart',[CartController::class,'addToCart']);
+        Route::post('removeFromCart',[CartController::class,'removeFromCart']);
+    });
+
 });
 
 Route::get('categories/image/{img}/{no_cache}', [CategoryController::class, 'categoriesImages'])->name('category_image');

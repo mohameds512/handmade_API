@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Item;
+use App\Models\Favorite;
 use Illuminate\Support\Str;
-
+use Auth;
 class ItemController extends Controller
 {
     public function index(){
@@ -16,10 +17,14 @@ class ItemController extends Controller
         });
         return \success(['items'=>$items]);
     }
+    
     public function cat_items(Request $request){
-        return "dddddddddddddddddd";
-        $items = Item::where('category_id',$request->cat_id)->get()->transform(function($item){
+        $user_id = $request->user_id;
+        // return $user_id;
+        // where('category_id',$request->cat_id)->
+        $items = Item::where('category_id',$request->cat_id)->get()->transform(function($item)  use ($user_id){
             $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->fav = $item->check_favorite($item->id,$user_id);
             return $item;
         });
         return \success(['items'=>$items]);
@@ -35,7 +40,12 @@ class ItemController extends Controller
             saveRequestFile($file_image, "$image", "items");
         }
         
-        $item->fill($request->all());
+        // $item->fill($request->all());
+        $item->name = ["ar"=>$request->name_ar,"en"=>$request->name_en,"du"=>$request->name_du];
+        $item->desc = $request->desc;
+        $item->count = $request->count;
+        $item->price = $request->price;
+        $item->discount = $request->discount;
         $item->image = $image;
         $item->save();
         return response()->json(['message' => "success"], 201);
@@ -51,5 +61,28 @@ class ItemController extends Controller
         }
         return response(['message' => 'not found'], 404);
 
+    }
+
+    public function AddRemoveFavorite(Request $request){
+        $fav = Favorite::where('users_id',$request->user_id)->where('items_id',$request->item_id)->first();
+        if (empty($fav)) {
+            $fav = new Favorite();
+            $fav->users_id = $request->user_id;
+            $fav->items_id = $request->item_id;
+            $fav->save();
+        }else {
+            $fav->delete();
+        }
+        return success();
+    }
+
+    public function getFavoritesItems(Request $request) {
+        $item_ids = Favorite::where('users_id',$request->user_id)->pluck('items_id');
+        $items = Item::whereIn('id',$item_ids)->get()->transform(function($item){
+            $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->fav = 1;
+            return $item;
+        });
+        return \success(['items'=>$items]);
     }
 }
