@@ -49,6 +49,9 @@ Route::group(['prefix' => 'flutter' ], function () {
     Route::group(['prefix'=>'cart'], function () {
         Route::post('addToCart',[CartController::class,'addToCart']);
         Route::post('removeFromCart',[CartController::class,'removeFromCart']);
+        Route::post('indexCart',[CartController::class,'indexCart']);
+        Route::post('countItemCart',[CartController::class,'countItemCart']);
+
     });
 
 });
