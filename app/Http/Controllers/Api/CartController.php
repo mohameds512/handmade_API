@@ -2,23 +2,31 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
-class CartController extends Controller
+
+class CartController extends Controller 
 {
     public function indexCart(Request $request) {
         $carts = Cart::join('items','items.id','cart.item_id')
                     ->where('user_id',$request->user_id)
                     ->select('items.*',DB::raw('SUM(items.price) as all_price'),DB::raw('COUNT(cart.item_id) item_count'))
                     ->groupBy('cart.item_id')
-                    ->get();
+                    ->get()->transform(function($item) {
+                        $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+                        return $item;
+                    });
         
-        return response(['carts'=>$carts]);
-    }
+        $totalPrice = Cart::join('items','items.id','cart.item_id')->
+        where('user_id',$request->user_id)->select(DB::raw('SUM(items.price) as total_price'),DB::raw('COUNT(cart.item_id) item_count'))->first();
+            
 
+        return response(['carts'=>$carts,"totalPrice"=>$totalPrice['total_price'],"total_count"=>$totalPrice['item_count']]);
+    }
     public function countItemCart(Request $request) {
         $carts = Cart::where('user_id',$request->user_id)->where('item_id',$request->item_id)->get();
         if (!empty($carts)) {
@@ -28,8 +36,8 @@ class CartController extends Controller
         }
         return response(['carts'=>$count]);
     } 
-    
-    
+
+
     public function addToCart(Request $request) {
         $cart = new Cart();
         $cart->user_id = $request->user_id;

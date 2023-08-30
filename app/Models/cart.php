@@ -11,7 +11,7 @@ class Cart extends Model
     protected $table='cart';
 
     protected $guarded;
-    // protected $casts = ['name' => 'json','desc' => 'json'];
+    protected $casts = ['name' => 'json','desc' => 'json'];
 
     // public function check_favorite($item_id,$user_id){
     //     $fav = DB::table('favorites')->where('items_id',$item_id)->where('users_id',$user_id)->first();
