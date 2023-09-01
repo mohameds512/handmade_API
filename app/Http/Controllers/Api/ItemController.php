@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Favorite;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Auth;
 class ItemController extends Controller
 {
     public function index(){
         $items = Item::get()->transform(function($item){
             $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->discount_price = $item->price - ($item->price * $item->discount/100);
             return $item;
         });
         return \success(['items'=>$items]);
@@ -24,6 +26,7 @@ class ItemController extends Controller
         // where('category_id',$request->cat_id)->
         $items = Item::where('category_id',$request->cat_id)->get()->transform(function($item)  use ($user_id){
             $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->discount_price = $item->price - ($item->price * $item->discount/100);
             $item->fav = $item->check_favorite($item->id,$user_id);
             return $item;
         });
@@ -85,4 +88,24 @@ class ItemController extends Controller
         });
         return \success(['items'=>$items]);
     }
+
+    public function search(Request $request) {
+        $keyword = $request->keyword;
+        $items = Item::search($keyword);
+        return $items;
+        // $items = DB::table('items')
+        //     ->where(function ($query) use($keyword){
+        //         $query->where('name->ar', 'LIKE', '%'.$keyword.'%')
+        //             ->orWhere('name->en', 'LIKE', '%'.$keyword.'%') 
+        //             ->orWhere('name->du', 'LIKE', '%'.$keyword.'%')
+        //             ->orWhere('desc->ar', 'LIKE', '%'.$keyword.'%')
+        //             ->orWhere('desc->en', 'LIKE', '%'.$keyword.'%')
+        //             ->orWhere('desc->du', 'LIKE', '%'.$keyword.'%');
+        //     })->get();
+        // if (count($items) > 0) {
+        //     return \success(['items'=>$items]);
+        // }
+        // return response(["status"=>"failure"]);
+    }
+
 }

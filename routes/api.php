@@ -44,6 +44,7 @@ Route::group(['prefix' => 'flutter' ], function () {
         Route::post('storeItem/{item?}',[ItemController::class,'storeItem']);
         Route::post('AddRemoveFavorite',[ItemController::class,'AddRemoveFavorite']);
         Route::post('getFavoritesItems',[ItemController::class,'getFavoritesItems']);
+        Route::post('searchItems',[ItemController::class,'search']);
     });
     
     Route::group(['prefix'=>'cart'], function () {
