@@ -11,10 +11,11 @@ use Illuminate\Support\Str;
 
 class CartController extends Controller 
 {
+    
     public function indexCart(Request $request) {
         $carts = Cart::join('items','items.id','cart.item_id')
                     ->where('user_id',$request->user_id)
-                    ->select('items.*',DB::raw('SUM(items.price) as all_price'),DB::raw('COUNT(cart.item_id) item_count'))
+                    ->select('items.*',DB::raw('SUM(items.price - (items.price*items.discount/100)) as all_price'),DB::raw('COUNT(cart.item_id) item_count'))
                     ->groupBy('cart.item_id')
                     ->get()->transform(function($item) {
                         $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
@@ -22,7 +23,7 @@ class CartController extends Controller
                     });
         
         $totalPrice = Cart::join('items','items.id','cart.item_id')->
-        where('user_id',$request->user_id)->select(DB::raw('SUM(items.price) as total_price'),DB::raw('COUNT(cart.item_id) item_count'))->first();
+        where('user_id',$request->user_id)->select(DB::raw('SUM(items.price - (items.price*items.discount/100)) as total_price'),DB::raw('COUNT(cart.item_id) item_count'))->first();
             
 
         return response(['carts'=>$carts,"totalPrice"=>$totalPrice['total_price'],"total_count"=>$totalPrice['item_count']]);

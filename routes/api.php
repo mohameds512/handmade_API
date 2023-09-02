@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\AddressController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
@@ -55,6 +56,11 @@ Route::group(['prefix' => 'flutter' ], function () {
 
     });
 
+    Route::group(['prefix'=>'address'], function () {
+        Route::post('addAddress',[AddressController::class,'AddAddress']);
+        Route::post('indexAddress',[AddressController::class,'IndexAddress']);
+
+    });
 });
 
 Route::get('categories/image/{img}/{no_cache}', [CategoryController::class, 'categoriesImages'])->name('category_image');

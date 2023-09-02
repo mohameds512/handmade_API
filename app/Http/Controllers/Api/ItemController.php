@@ -83,6 +83,7 @@ class ItemController extends Controller
         $item_ids = Favorite::where('users_id',$request->user_id)->pluck('items_id');
         $items = Item::whereIn('id',$item_ids)->get()->transform(function($item){
             $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->discount_price = $item->price - ($item->price * $item->discount/100);
             $item->fav = 1;
             return $item;
         });
