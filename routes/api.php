@@ -58,7 +58,8 @@ Route::group(['prefix' => 'flutter' ], function () {
 
     Route::group(['prefix'=>'address'], function () {
         Route::post('addAddress',[AddressController::class,'AddAddress']);
-        Route::post('indexAddress',[AddressController::class,'IndexAddress']);
+        Route::post('IndexAddress',[AddressController::class,'IndexAddress']);
+        Route::post('deleteAddress',[AddressController::class,'deleteAddress']);
 
     });
 });

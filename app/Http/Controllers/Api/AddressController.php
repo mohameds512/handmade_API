@@ -10,9 +10,10 @@ use App\Models\Address;
 class AddressController extends Controller
 {
     public function IndexAddress(Request $request){
-        
-        
-        return \success();
+
+        $addresses = Address::where('user_id',$request->user_id)->get();
+
+        return $addresses;
         
     }
 
@@ -33,4 +34,10 @@ class AddressController extends Controller
         return \success();
         
     }
+    public function deleteAddress(Request $request){
+        $address = Address::where('id',$request->address_id)->first();
+        $address->delete();
+        return \success();
+    }
+    
 }
