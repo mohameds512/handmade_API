@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\AddressController;
+use App\Http\Controllers\Api\CouponController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
@@ -62,6 +63,14 @@ Route::group(['prefix' => 'flutter' ], function () {
         Route::post('deleteAddress',[AddressController::class,'deleteAddress']);
 
     });
+
+    Route::group(['prefix'=>'coupon'], function () {
+        Route::post('CheckCoupon',[CouponController::class,'CheckCoupon']);
+        Route::post('addCoupon',[CouponController::class,'addCoupon']);
+        Route::post('deleteCoupon',[CouponController::class,'deleteCoupon']);
+
+    });
+
 });
 
 Route::get('categories/image/{img}/{no_cache}', [CategoryController::class, 'categoriesImages'])->name('category_image');
