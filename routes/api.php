@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\CouponController;
+use App\Http\Controllers\Api\OrderController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
@@ -68,6 +69,13 @@ Route::group(['prefix' => 'flutter' ], function () {
         Route::post('CheckCoupon',[CouponController::class,'CheckCoupon']);
         Route::post('addCoupon',[CouponController::class,'addCoupon']);
         Route::post('deleteCoupon',[CouponController::class,'deleteCoupon']);
+
+    });
+
+    Route::group(['prefix'=>'order'], function () {
+        Route::post('AddOrder',[OrderController::class,'AddOrder']);
+        // Route::post('addCoupon',[OrderController::class,'addCoupon']);
+        // Route::post('deleteCoupon',[OrderController::class,'deleteCoupon']);
 
     });
 

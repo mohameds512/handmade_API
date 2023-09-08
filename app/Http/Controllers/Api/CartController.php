@@ -15,6 +15,7 @@ class CartController extends Controller
     public function indexCart(Request $request) {
         $carts = Cart::join('items','items.id','cart.item_id')
                     ->where('user_id',$request->user_id)
+                    ->where('cart_order_id',0)
                     ->select('items.*',DB::raw('SUM(items.price - (items.price*items.discount/100)) as all_price'),DB::raw('COUNT(cart.item_id) item_count'))
                     ->groupBy('cart.item_id')
                     ->get()->transform(function($item) {
@@ -23,13 +24,14 @@ class CartController extends Controller
                     });
         
         $totalPrice = Cart::join('items','items.id','cart.item_id')->
-        where('user_id',$request->user_id)->select(DB::raw('SUM(items.price - (items.price*items.discount/100)) as total_price'),DB::raw('COUNT(cart.item_id) item_count'))->first();
+        where('user_id',$request->user_id)->where('cart_order_id',0)->select(DB::raw('SUM(items.price - (items.price*items.discount/100)) as total_price'),DB::raw('COUNT(cart.item_id) item_count'))->first();
             
 
         return response(['carts'=>$carts,"totalPrice"=>$totalPrice['total_price'],"total_count"=>$totalPrice['item_count']]);
     }
+    
     public function countItemCart(Request $request) {
-        $carts = Cart::where('user_id',$request->user_id)->where('item_id',$request->item_id)->get();
+        $carts = Cart::where('user_id',$request->user_id)->where('item_id',$request->item_id)->where('cart_order_id',0)->get();
         if (!empty($carts)) {
             $count = count($carts);
         }else{

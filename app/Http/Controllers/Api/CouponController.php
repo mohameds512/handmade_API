@@ -19,7 +19,7 @@ class CouponController extends Controller
         $expireDate = strtotime($coupon->expire_date);
         if (time() < $expireDate) {
             return \response()->json(['coupon'=>$coupon,'status'=>'success']);
-        }else{
+        }else{ 
             return \response()->json(['status'=>'failure']);
 
         }
