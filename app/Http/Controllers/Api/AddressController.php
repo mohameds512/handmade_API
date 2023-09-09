@@ -13,7 +13,7 @@ class AddressController extends Controller
 
         $addresses = Address::where('user_id',$request->user_id)->get();
 
-        return $addresses;
+        return response(['addresses'=>$addresses]);
         
     }
 

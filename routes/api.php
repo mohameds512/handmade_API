@@ -74,7 +74,7 @@ Route::group(['prefix' => 'flutter' ], function () {
 
     Route::group(['prefix'=>'order'], function () {
         Route::post('AddOrder',[OrderController::class,'AddOrder']);
-        // Route::post('addCoupon',[OrderController::class,'addCoupon']);
+        Route::post('IndexOrders',[OrderController::class,'IndexOrders']);
         // Route::post('deleteCoupon',[OrderController::class,'deleteCoupon']);
 
     });

@@ -11,7 +11,7 @@ class CouponController extends Controller
 {
     public function CheckCoupon(Request $request){
         
-        $coupon = Coupon::where('name',$request->name)->where('count','>',0)->first();
+        $coupon = Coupon::where('name',$request->name)->where('remaining','>',0)->first();
         if (!$coupon) {
             return \response()->json(['status'=>'failure']);
             
@@ -29,6 +29,7 @@ class CouponController extends Controller
     public function addCoupon(Request $request){
         $coupon = new Coupon();
         $coupon->fill($request->all());
+        $coupon->remaining = $request->count;
         $coupon->save();
         return \success();
     }
