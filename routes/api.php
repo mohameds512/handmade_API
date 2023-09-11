@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\FirebaseController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
@@ -76,6 +77,11 @@ Route::group(['prefix' => 'flutter' ], function () {
         Route::post('AddOrder',[OrderController::class,'AddOrder']);
         Route::post('IndexOrders',[OrderController::class,'IndexOrders']);
         // Route::post('deleteCoupon',[OrderController::class,'deleteCoupon']);
+
+    });
+
+    Route::group(['prefix'=>'notification'], function () {
+        Route::post('sendNot',[FirebaseController::class,'sendNotification']);
 
     });
 
