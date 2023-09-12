@@ -25,7 +25,12 @@ class CartController extends Controller
         
         $totalPrice = Cart::join('items','items.id','cart.item_id')->
         where('user_id',$request->user_id)->where('cart_order_id',0)->select(DB::raw('SUM(items.price - (items.price*items.discount/100)) as total_price'),DB::raw('COUNT(cart.item_id) item_count'))->first();
-            
+            if($request->has('device_token')){
+            $device = new Devices();
+            $device->user_id = $user->id;
+            $device->device_token = $request->device_token;
+            $device->save();
+        }
 
         return response(['carts'=>$carts,"totalPrice"=>$totalPrice['total_price'],"total_count"=>$totalPrice['item_count']]);
     }

@@ -8,6 +8,7 @@ use App\Models\System\Invitation;
 use App\Mail\verifyEmail;
 use App\Mail\resetPassword;
 use App\Models\User;
+use App\Models\Devices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -41,6 +42,18 @@ class AuthController extends Controller
         if($user->email_verified_at == null){
             return \response(['status'=>'verify_email' ]);
         }
+
+        if($request->has('device_token')){
+            $check = Devices::where('user_id',$user->id,)->where('device_token',$request->device_token)->first();
+            if (empty($check)) {
+                $device = new Devices();
+                $device->user_id = $user->id;
+                $device->device_token = $request->device_token;
+                $device->save();
+            }
+            
+        }
+
         return success($data);
     }
 

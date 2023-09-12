@@ -9,6 +9,9 @@ use App\Models\Favorite;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Auth;
+use App\Models\User;
+
+use App\Http\Controllers\Api\FirebaseController;
 class ItemController extends Controller
 {
     public function index(){
@@ -45,12 +48,18 @@ class ItemController extends Controller
         
         // $item->fill($request->all());
         $item->name = ["ar"=>$request->name_ar,"en"=>$request->name_en,"du"=>$request->name_du];
-        $item->desc = $request->desc;
+        $item->desc =  ["ar"=>$request->desc_ar,"en"=>$request->desc_en,"du"=>$request->desc_du];
         $item->count = $request->count;
         $item->price = $request->price;
         $item->discount = $request->discount;
         $item->image = $image;
         $item->save();
+
+        $all_users = User::get('id');
+        foreach ($all_users as $user) {
+            FirebaseController::sendNotification( $user->id,"New item added","new item has been added");
+        }
+
         return response()->json(['message' => "success"], 201);
     }
     
