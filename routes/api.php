@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\FirebaseController;
+use App\Http\Controllers\Api\AdminController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
@@ -85,6 +86,13 @@ Route::group(['prefix' => 'flutter' ], function () {
 
     });
 
+});
+
+Route::group(['prefix' => 'admin' ], function () {
+    Route::group(['prefix'=>'order'], function () {
+        Route::post('approve',[AdminController::class,'approveOrder']);
+
+    });
 });
 
 Route::get('categories/image/{img}/{no_cache}', [CategoryController::class, 'categoriesImages'])->name('category_image');

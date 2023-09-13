@@ -55,10 +55,13 @@ class ItemController extends Controller
         $item->image = $image;
         $item->save();
 
-        $all_users = User::get('id');
-        foreach ($all_users as $user) {
-            FirebaseController::sendNotification( $user->id,"New item added","new item has been added");
-        }
+        FirebaseController::sendNotification("users" ,"New item added","new item has been added","","");
+
+        // $all_users = User::get('id');
+        // foreach ($all_users as $user) {
+        //     FirebaseController::sendNotification("users" ,"New item added","new item has been added","","");
+        //     // FirebaseController::sendNotification("users" ,$user->id,"New item added","new item has been added",null,null);
+        // }
 
         return response()->json(['message' => "success"], 201);
     }
