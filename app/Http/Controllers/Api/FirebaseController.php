@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Devices;
+use App\Models\Notifications;
 
 class FirebaseController extends Controller
 {
@@ -16,7 +17,7 @@ class FirebaseController extends Controller
         // $device = Devices::where('user_id',$user_id)->get('device_token')->first();
 
         
-        if (!empty($device)) {
+        // if (!empty($device)) {
             
             // $data = [
             //     "registration_ids" => [
@@ -72,10 +73,10 @@ class FirebaseController extends Controller
             curl_setopt($ch,CURLOPT_POSTFIELDS,$dataString);
 
             $response = curl_exec($ch);
-
+            
             dd($response);
 
-        }
+        // }
         // $device_token = 'fK17kiIRRRqAdMqtWEn67x:APA91bELvJOtdPHIdnJHyH6aptKm4VsKk9Ix4LBken_Dhme40pEkV3rtxjqSn8qW_88XgGwteCQEbJTigKAYXJEEilXq5h5uVTducuC1GC1fHzy53Gmwi0h_u4sJS0rfsmtFpa_8JbS3';
     }
     

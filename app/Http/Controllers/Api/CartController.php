@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Cart;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Api\FirebaseController;
 
 
 class CartController extends Controller 
@@ -31,6 +32,11 @@ class CartController extends Controller
             $device->device_token = $request->device_token;
             $device->save();
         }
+
+        // if($request->user_id == 85){
+        //     FirebaseController::sendNotification("users" ,"New item added","new item has been added","","");
+
+        // }
 
         return response(['carts'=>$carts,"totalPrice"=>$totalPrice['total_price'],"total_count"=>$totalPrice['item_count']]);
     }

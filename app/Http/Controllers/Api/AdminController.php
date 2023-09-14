@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Order;
+use App\Models\Notifications;
 use App\Http\Controllers\Api\FirebaseController;
 
 
@@ -16,7 +17,14 @@ class AdminController extends Controller
         $order->status = 1;
         $order->save();
         $user_id = $order->user_id;
-        FirebaseController::sendNotification("user_$user_id" ,"Order","Your order has been approved","","");
+
+        $title = "Order";
+        $body = "Your order has been approved";
+        
+        FirebaseController::sendNotification("user_$user_id" ,$title,$body,"2","order");
+        
+        Notifications::add($user_id,$title,$body);
+        
         return \success();
     }
 }

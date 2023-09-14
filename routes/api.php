@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\FirebaseController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\NotificationController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
@@ -83,6 +84,7 @@ Route::group(['prefix' => 'flutter' ], function () {
 
     Route::group(['prefix'=>'notification'], function () {
         Route::post('sendNot',[FirebaseController::class,'sendNotification']);
+        Route::post('getNotif',[NotificationController::class,'getNotification']);
 
     });
 

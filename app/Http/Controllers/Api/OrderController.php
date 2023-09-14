@@ -5,6 +5,7 @@ use App\Models\Order;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Http\Resources\flutter\orderResources;
+use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\DB;
 
@@ -32,6 +33,12 @@ class OrderController extends Controller
                 $order->fill($request->all());
                 $order->save();
                 
+                $rand_1 = Str::random(2);
+                $rand_2 = Str::random(4);
+                $rand_4 = random_int(10 ,99);
+                $order_code = $rand_1.$order->id.$rand_2.$rand_4;
+                $order->order_code = $order_code;
+                $order->save();
                 $carts = Cart::where('user_id',$request->user_id)
                         ->where('cart_order_id',0)->get();
                 foreach ($carts as $cart) {
