@@ -6,11 +6,13 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Http\Resources\flutter\orderResources;
 use Illuminate\Support\Str;
+use App\Models\Item;
 
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Address;
 
 class OrderController extends Controller
 {
@@ -59,6 +61,21 @@ class OrderController extends Controller
             return $e;
 
         }
+        
+    }
+
+    public function OrderDetails(Request $request) {
+        $data = (object)[];
+        $items = Cart::where('cart_order_id',$request->order_id)
+                    ->join('items','items.id','cart.item_id')
+                    ->select('items.*',DB::raw('SUM(items.price - (items.price*items.discount/100)) as all_price'),DB::raw('COUNT(cart.item_id) item_count'))
+                    ->groupBy('cart.item_id')
+                    ->get();
+        $data->items = $items;    
+        $order = Order::find($request->order_id);
+        $address = Address::where('id',$order->address_id)->first();
+        $data->address = $address;
+        return response(['data'=>$data]);
         
     }
 
