@@ -79,6 +79,9 @@ Route::group(['prefix' => 'flutter' ], function () {
         Route::post('AddOrder',[OrderController::class,'AddOrder']);
         Route::post('IndexOrders',[OrderController::class,'IndexOrders']);
         Route::post('OrderDetails',[OrderController::class,'OrderDetails']);
+        Route::post('deleteOrder',[OrderController::class,'deleteOrder']);
+        
+        Route::post('ArchivedOrders',[OrderController::class,'ArchivedOrders']);
 
     });
 

@@ -22,6 +22,7 @@ class orderResources extends JsonResource
         if($coupon){
             $coupon_code = $coupon->name;
         }
+        $status = $this->status == 0 ? "Pending" : ($this->status == 1 ? "Approved" : ($this->status == 2 ? "On the way":"Received"));
         return [
             'id'=>$this->id,
             'order_code'=>$this->order_code,
@@ -31,6 +32,7 @@ class orderResources extends JsonResource
             'orders_price'=>$this->orders_price,
             'order_total_price'=>$this->order_total_price,
             'discount'=>$this->discount,
+            'status' => $status,
             'created_at'=>$this->created_at,
             'address_name'=>$address_name,
             'coupon_code' => $coupon_code,

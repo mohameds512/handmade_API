@@ -17,7 +17,15 @@ use App\Models\Address;
 class OrderController extends Controller
 {
     public function IndexOrders(Request $request) {
-        $orders = Order::where('orders.user_id',$request->user_id)->get();
+        $orders = Order::where('orders.status','!=',4)->where('orders.user_id',$request->user_id)->get();
+        
+        $data = orderResources::collection($orders);
+        return response(["orders"=>$data]);
+    }
+
+    public function ArchivedOrders(Request $request) {
+        $orders = Order::where('orders.status',4)->where('orders.user_id',$request->user_id)->get();
+        
         $data = orderResources::collection($orders);
         return response(["orders"=>$data]);
     }
@@ -77,6 +85,21 @@ class OrderController extends Controller
         $data->address = $address;
         return response(['data'=>$data]);
         
+    }
+
+    public function deleteOrder(Request $request) {
+
+        $order = Order::where('id',$request->order_id)->first();
+        
+        if($order->status == 0){
+            $cart_orders = Cart::where('cart_order_id',$order->id)->get();
+            foreach ($cart_orders as $cart_order) {
+                $cart_order->cart_order_id = 0 ;
+                $cart_order->save();
+            }
+            $order->delete(); 
+        }
+        return \success();
     }
 
 }
