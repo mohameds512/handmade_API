@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\FirebaseController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\OffersController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
@@ -82,12 +83,19 @@ Route::group(['prefix' => 'flutter' ], function () {
         Route::post('deleteOrder',[OrderController::class,'deleteOrder']);
         
         Route::post('ArchivedOrders',[OrderController::class,'ArchivedOrders']);
+        
+        Route::post('ratingOrder',[OrderController::class,'ratingOrder']);
 
     });
 
     Route::group(['prefix'=>'notification'], function () {
         Route::post('sendNot',[FirebaseController::class,'sendNotification']);
         Route::post('getNotif',[NotificationController::class,'getNotification']);
+
+    });
+
+    Route::group(['prefix'=>'offer'], function () {
+        Route::post('offersData',[OffersController::class,'offersData']);
 
     });
 

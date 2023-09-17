@@ -102,4 +102,13 @@ class OrderController extends Controller
         return \success();
     }
 
+    public function ratingOrder(Request $request){
+        $order = Order::where('id',$request->order_id)->first();
+        $order->rating = $request->rating;
+        $order->notes = $request->notes;
+        $order->save();
+        return \success();
+
+    }
+
 }
