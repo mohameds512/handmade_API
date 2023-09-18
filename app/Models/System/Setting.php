@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Setting extends Model
 {
     use HasFactory;
+    protected $guarded;
+    // protected $fillable = ['name','value'];
+    protected $casts = ['name' => 'json','body' => 'json'];
 
-    protected $fillable = ['name','value'];
 
 }

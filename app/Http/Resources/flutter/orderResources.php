@@ -36,7 +36,9 @@ class orderResources extends JsonResource
             'created_at'=>$this->created_at,
             'address_name'=>$address_name,
             'coupon_code' => $coupon_code,
-            'added_ago' =>$this->created_at->diffForHumans(),
+            'rating' => $this->rating,
+            'notes' => $this->notes,
+            'added_ago' =>$this->created_at->diffForHumans(null, true, true),
         ];
 
     }

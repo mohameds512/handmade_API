@@ -18,7 +18,7 @@ class NotificationResources extends JsonResource
             'id'=>$this->id,
             'title'=>$this->title,
             'body'=>$this->body,
-            'added_ago' =>$this->created_at->shortRelativeDiffForHumans(),
+            'added_ago' =>$this->created_at->diffForHumans(null, true, true),
         ];
     }
 }
