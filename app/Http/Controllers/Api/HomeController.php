@@ -24,6 +24,7 @@ class HomeController extends Controller
 
         $items = Item::get()->transform(function($item){
             $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->discount_price = $item->price - ($item->price * $item->discount/100);
             return $item;
         });
         $data->items = $items;
