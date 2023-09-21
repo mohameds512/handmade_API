@@ -22,6 +22,49 @@ class AuthController extends Controller
         return $this->middleware('guest');
     }
 
+    public function adminLogin(Request $request)
+    {
+        
+        $valid = $request->validate(
+            [
+                'email' => 'required|email',
+                'password' => 'required|string'
+            ]
+        );
+        $user = \App\Models\User::where('email', $valid['email'])->first();
+        
+        if (!$user || !Hash::check($valid['password'], $user->password)) {
+            return \response(['status'=>'invalid_mail_password' ]);
+        }
+
+        // if (!canUserAccess('partner')) return error(System::HTTP_UNAUTHORIZED);
+
+        if(!$user->hasPermissionTo('partner', 'api')){
+            error(System::HTTP_UNAUTHORIZED);
+        }
+
+        $data = (object) [];
+        $token = $user->createToken('app');
+        $data = $user->data(true);
+        $data->token = $token->accessToken;
+        if($user->email_verified_at == null){
+            return \response(['status'=>'verify_email' ]);
+        }
+
+        if($request->has('device_token')){
+            $check = Devices::where('user_id',$user->id,)->where('device_token',$request->device_token)->first();
+            if (empty($check)) {
+                $device = new Devices();
+                $device->user_id = $user->id;
+                $device->device_token = $request->device_token;
+                $device->save();
+            }
+            
+        }
+
+        return success($data);
+    }
+    
     public function login(Request $request)
     {
         $valid = $request->validate(

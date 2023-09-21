@@ -102,6 +102,8 @@ Route::group(['prefix' => 'flutter' ], function () {
 });
 
 Route::group(['prefix' => 'admin' ], function () {
+
+    Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'adminLogin']);
     Route::group(['prefix'=>'order'], function () {
         Route::post('approve',[AdminController::class,'approveOrder']);
 
