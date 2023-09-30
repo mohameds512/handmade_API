@@ -14,9 +14,39 @@ use App\Models\User;
 use App\Http\Controllers\Api\FirebaseController;
 class ItemController extends Controller
 {
+    public function adminArchivedItems(){
+        $user_id =  Auth::user()->id;
+
+        $items = Item::onlyTrashed()->where('user_id',$user_id)
+                    ->join('categories','categories.id','items.category_id')
+                    ->select('items.*','categories.name as cat_name')
+                    ->orderBy('id','DESC')
+                    ->get()->transform(function($item){
+            $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->discount_price = $item->price - ($item->price * $item->discount/100);
+            return $item;
+        });
+        return \success(['items'=>$items]);
+    }
+    public function adminIndex(){
+        $user_id =  Auth::user()->id;
+
+        $items = Item::where('user_id',$user_id)
+                    ->join('categories','categories.id','items.category_id')
+                    ->select('items.*','categories.name as cat_name')
+                    ->orderBy('id','DESC')
+                    ->get()->transform(function($item){
+            $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->discount_price = $item->price - ($item->price * $item->discount/100);
+            return $item;
+        });
+        return \success(['items'=>$items]);
+    }
+    
+
     public function index(){
         $items = Item::get()->transform(function($item){
-            $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
             $item->discount_price = $item->price - ($item->price * $item->discount/100);
             return $item;
         });
@@ -28,7 +58,7 @@ class ItemController extends Controller
         // return $user_id;
         // where('category_id',$request->cat_id)->
         $items = Item::where('category_id',$request->cat_id)->get()->transform(function($item)  use ($user_id){
-            $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
             $item->discount_price = $item->price - ($item->price * $item->discount/100);
             $item->fav = $item->check_favorite($item->id,$user_id);
             return $item;
@@ -37,6 +67,8 @@ class ItemController extends Controller
     }
 
     public function storeItem(Request $request,Item $item){
+        $user_id =  Auth::user()->id;
+
         if(!$item){
             $item = new Item();
         }
@@ -44,6 +76,7 @@ class ItemController extends Controller
             $file_image = $request->file('image');
             $image =Str::random(6);
             saveRequestFile($file_image, "$image", "items");
+            $item->image = $image;
         }
         
         // $item->fill($request->all());
@@ -51,8 +84,10 @@ class ItemController extends Controller
         $item->desc =  ["ar"=>$request->desc_ar,"en"=>$request->desc_en,"du"=>$request->desc_du];
         $item->count = $request->count;
         $item->price = $request->price;
+        $item->category_id = $request->cat_id;
         $item->discount = $request->discount;
-        $item->image = $image;
+        
+        $item->user_id = $user_id;
         $item->save();
 
         FirebaseController::sendNotification("users" ,"New item added","new item has been added","","");
@@ -66,10 +101,10 @@ class ItemController extends Controller
         return response()->json(['message' => "success"], 201);
     }
     
-    public function itemsImages(Request $request, $img, $no_cache)
+    public function itemsImages(Request $request,$folder, $img, $no_cache)
     {
 
-        $paths = findFiles("items", "$img");
+        $paths = findFiles("$folder", "$img");
 
         if (isset($paths[0]) && $paths[0]) {
             return responseFile($paths[0], "$img");
@@ -94,7 +129,7 @@ class ItemController extends Controller
     public function getFavoritesItems(Request $request) {
         $item_ids = Favorite::where('users_id',$request->user_id)->pluck('items_id');
         $items = Item::whereIn('id',$item_ids)->get()->transform(function($item){
-            $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
             $item->discount_price = $item->price - ($item->price * $item->discount/100);
             $item->fav = 1;
             return $item;
@@ -119,6 +154,23 @@ class ItemController extends Controller
         //     return \success(['items'=>$items]);
         // }
         // return response(["status"=>"failure"]);
+    }
+
+    public function deleteItem(Request $request,Item $item)
+    {
+        if($item){
+            $item->delete();
+        }
+        return \success();
+    }
+
+    public function restoreDeletedItem(Request $request,Item $item)
+    {
+        return "ssssssssssssss";
+        // if($item){
+        //     $item->restore();
+        // }
+        // return \success();
     }
 
 }

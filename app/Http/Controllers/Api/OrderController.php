@@ -13,9 +13,10 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Address;
-
+use Auth;
 class OrderController extends Controller
 {
+    
     public function IndexOrders(Request $request) {
         $orders = Order::where('orders.status','!=',4)->where('orders.user_id',$request->user_id)->get();
         
@@ -76,12 +77,19 @@ class OrderController extends Controller
         $data = (object)[];
         $items = Cart::where('cart_order_id',$request->order_id)
                     ->join('items','items.id','cart.item_id')
-                    ->select('items.*',DB::raw('SUM(items.price - (items.price*items.discount/100)) as all_price'),DB::raw('COUNT(cart.item_id) item_count'))
+                    ->join('orders','orders.id','cart.cart_order_id')
+                    ->select('orders.order_code','items.*',DB::raw('SUM(items.price - (items.price*items.discount/100)) as all_price')
+                    ,DB::raw('COUNT(cart.item_id) item_count'))
                     ->groupBy('cart.item_id')
-                    ->get();
+                    ->get()->transform(function($item){
+                        $item->item_code = $item->order_code .'_'. $item->id.'_'.$item->item_count;
+                        return $item;
+                    });
         $data->items = $items;    
         $order = Order::find($request->order_id);
+        
         $address = Address::where('id',$order->address_id)->first();
+        
         $data->address = $address;
         return response(['data'=>$data]);
         

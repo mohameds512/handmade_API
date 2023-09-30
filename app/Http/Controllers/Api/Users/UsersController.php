@@ -78,7 +78,7 @@ class UsersController extends Controller
         }
         return success();
     }
-
+ 
     public function put(UserRequest $request, User $user = null)
     {
         if (!can('edit_users')) return error(System::HTTP_UNAUTHORIZED);

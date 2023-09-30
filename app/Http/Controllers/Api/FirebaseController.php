@@ -74,7 +74,7 @@ class FirebaseController extends Controller
 
             $response = curl_exec($ch);
             
-            dd($response);
+            // dd($response);
 
         // }
         // $device_token = 'fK17kiIRRRqAdMqtWEn67x:APA91bELvJOtdPHIdnJHyH6aptKm4VsKk9Ix4LBken_Dhme40pEkV3rtxjqSn8qW_88XgGwteCQEbJTigKAYXJEEilXq5h5uVTducuC1GC1fHzy53Gmwi0h_u4sJS0rfsmtFpa_8JbS3';

@@ -15,27 +15,22 @@ class CartController extends Controller
     
     public function indexCart(Request $request) {
         $carts = Cart::join('items','items.id','cart.item_id')
-                    ->where('user_id',$request->user_id)
+                    ->where('cart.user_id',$request->user_id)
                     ->where('cart_order_id',0)
                     ->select('items.*',DB::raw('SUM(items.price - (items.price*items.discount/100)) as all_price'),DB::raw('COUNT(cart.item_id) item_count'))
                     ->groupBy('cart.item_id')
                     ->get()->transform(function($item) {
-                        $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+                        $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
                         return $item;
                     });
         
-        $totalPrice = Cart::join('items','items.id','cart.item_id')->
-        where('user_id',$request->user_id)->where('cart_order_id',0)->select(DB::raw('SUM(items.price - (items.price*items.discount/100)) as total_price'),DB::raw('COUNT(cart.item_id) item_count'))->first();
-            if($request->has('device_token')){
-            $device = new Devices();
-            $device->user_id = $user->id;
-            $device->device_token = $request->device_token;
-            $device->save();
-        }
-
+        $totalPrice = Cart::join('items','items.id','cart.item_id')
+                    ->where('cart.user_id',$request->user_id)
+                    ->where('cart_order_id',0)->select(DB::raw('SUM(items.price - (items.price*items.discount/100)) as total_price'),DB::raw('COUNT(cart.item_id) item_count'))->first();
+            
+        
         // if($request->user_id == 85){
         //     FirebaseController::sendNotification("users" ,"New item added","new item has been added","","");
-
         // }
 
         return response(['carts'=>$carts,"totalPrice"=>$totalPrice['total_price'],"total_count"=>$totalPrice['item_count']]);

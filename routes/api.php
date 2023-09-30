@@ -21,12 +21,13 @@ use App\Http\Controllers\Api\FirebaseController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OffersController;
+use App\Http\Controllers\Api\VendorInfoController;
 
 
 Route::group(['prefix' => 'flutter' ], function () {
     
     Route::post('saveUser', [UsersController::class, 'store']);
-    Route::get('listUsers', [UsersController::class, 'index']);
+    // Route::get('listUsers', [UsersController::class, 'index']);
     Route::post('register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
     Route::post('checkverifycode', [\App\Http\Controllers\Api\AuthController::class, 'verifyCode']);
 
@@ -42,13 +43,13 @@ Route::group(['prefix' => 'flutter' ], function () {
     });
     Route::group(['prefix'=>'category'], function () {
         Route::post('get_categories',[CategoryController::class,'index']);
-        Route::post('storeCategory/{category?}',[CategoryController::class,'storeCategory']);
+        // Route::post('storeCategory/{category?}',[CategoryController::class,'storeCategory']);
     });
 
     Route::group(['prefix'=>'item'], function () {
         Route::post('get_items',[ItemController::class,'index']);
         Route::post('get_cat_items',[ItemController::class,'cat_items']);
-        Route::post('storeItem/{item?}',[ItemController::class,'storeItem']);
+        // Route::post('storeItem/{item?}',[ItemController::class,'storeItem']);
         Route::post('AddRemoveFavorite',[ItemController::class,'AddRemoveFavorite']);
         Route::post('getFavoritesItems',[ItemController::class,'getFavoritesItems']);
         Route::post('searchItems',[ItemController::class,'search']);
@@ -104,14 +105,51 @@ Route::group(['prefix' => 'flutter' ], function () {
 Route::group(['prefix' => 'admin' ], function () {
 
     Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'adminLogin']);
-    Route::group(['prefix'=>'order'], function () {
-        Route::post('approve',[AdminController::class,'approveOrder']);
+    Route::group(['middleware' => ['auth:api']], function()  {
+
+        Route::post('listUsers', [UsersController::class, 'index']);
+        Route::post('users/{id}', [UsersController::class, 'show']);
+
+        
+    Route::group(['prefix'=>'notification'], function () {
+        Route::post('sendNot',[FirebaseController::class,'sendNotification']);
+        Route::post('adminGetNotif',[NotificationController::class,'adminNotification']);
 
     });
+        Route::group(['prefix'=>'order'], function () {
+            Route::post('approve',[AdminController::class,'approveOrderedItem']);
+            Route::post('adminOrderedItems',[AdminController::class,'adminOrderedItems']);
+    
+        });
+    
+        Route::group(['prefix'=>'category'], function () {
+            Route::post('get_categories',[CategoryController::class,'index']);
+            Route::post('storeCategory/{category?}',[CategoryController::class,'storeCategory']);
+        });
+    
+        
+        Route::group(['prefix'=>'item'], function () {
+            Route::post('admin_get_items',[ItemController::class,'adminIndex']);
+            Route::post('admin_get_archived_items',[ItemController::class,'adminArchivedItems']);
+            Route::post('get_cat_items',[ItemController::class,'cat_items']);
+            Route::post('storeItem/{item?}',[ItemController::class,'storeItem']);
+            Route::post('AddRemoveFavorite',[ItemController::class,'AddRemoveFavorite']);
+            Route::post('getFavoritesItems',[ItemController::class,'getFavoritesItems']);
+            Route::post('searchItems',[ItemController::class,'search']);
+            Route::post('deleteItem/{item?}',[ItemController::class,'deleteItem']);
+            Route::post('restoreItem/{item?}',[ItemController::class,'restoreDeletedItem']);
+        });
+        Route::group(['prefix'=>'vendor'], function () {
+            Route::post('storeData/{vendor?}',[VendorInfoController::class,'storeData']);
+            Route::post('getData',[VendorInfoController::class,'getData']);
+        });
+    } );
+    
+
 });
 
 Route::get('categories/image/{img}/{no_cache}', [CategoryController::class, 'categoriesImages'])->name('category_image');
-Route::get('items/image/{img}/{no_cache}', [ItemController::class, 'itemsImages'])->name('item_image');
+Route::get('items/image/{folder}/{img}/{no_cache}', [ItemController::class, 'itemsImages'])->name('item_image');
 
 Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 

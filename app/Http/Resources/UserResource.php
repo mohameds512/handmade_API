@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'active' => $this->active,
-            // 'roles' => $this->roles()->select('name')->pluck('name') ?? null,
+            'roles' => $this->roles()->select('name')->pluck('name') ?? null,
             //'roles' => fn($q)=> $q->select("name"),
             'updated_at' => $this->updated_at->diffForHumans(),
             'removed' => $this->removed,

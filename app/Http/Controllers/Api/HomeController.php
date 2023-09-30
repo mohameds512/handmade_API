@@ -23,7 +23,7 @@ class HomeController extends Controller
         $data->categories = $categories;
 
         $items = Item::get()->transform(function($item){
-            $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
             $item->discount_price = $item->price - ($item->price * $item->discount/100);
             return $item;
         });
@@ -34,7 +34,7 @@ class HomeController extends Controller
         ->pluck('cart.item_id');
 
         $top_sealing = Item::whereIn('id',$items_id)->get()->transform(function($item){
-            $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+            $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
             return $item;
         });
         $data->top_sealing = $top_sealing;

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use App\Models\System;
 
 class AuthController extends Controller
 {
@@ -38,9 +39,9 @@ class AuthController extends Controller
         }
 
         // if (!canUserAccess('partner')) return error(System::HTTP_UNAUTHORIZED);
-
+        // return $user->hasPermissionTo('partner', 'api');
         if(!$user->hasPermissionTo('partner', 'api')){
-            error(System::HTTP_UNAUTHORIZED);
+            return error(System::HTTP_UNAUTHORIZED);
         }
 
         $data = (object) [];

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
-
+// use App\Http\Resources\UserResource;
 
 class UsersController extends Controller
 {
@@ -34,10 +34,17 @@ class UsersController extends Controller
      */
     public function index( )
     {
-        $users = User::with(['roles'=>fn($q)=>$q->select('id','name')])
+        $users = User::with(['roles' => function ($q) {
+            $q->select('name');
+        }])
             ->orderBy('id','DESC')
             ->paginate(5);
-       // $userCol = UserResource::collection(User::all());
+        $users->getCollection()->transform(function ($user) {
+            $user->setRelation('roles', $user->roles->pluck('name'));
+            return $user;
+        });
+            
+    //    $userCol = UserResource::collection(User::all());
         return success($users);
     }
 
@@ -79,23 +86,18 @@ class UsersController extends Controller
         return success(['message'=>'User Created Successfully']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     public function show(int $id)
     {
         $user = User::findOrFail($id);
-
+        
 //        if(! $user->hasAnyRole(Role::all())) {
 //            $user->assignRole('customer');
 //        }
 
         $userRole = DB::table('roles')->where('id',$user->role)->get();
-
         $roles = $user->getRoleNames();
+        
 
         return success(['user' => $user,'userRole'=>$userRole,'roles' => $roles ]);
     }

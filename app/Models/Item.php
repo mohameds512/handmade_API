@@ -6,14 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Item extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $table='items';
 
     protected $guarded;
-    protected $casts = ['name' => 'json','desc' => 'json'];
+    protected $casts = ['name' => 'json','desc' => 'json','cat_name'=>'json'];
 
     public function check_favorite($item_id,$user_id){
         $fav = DB::table('favorites')->where('items_id',$item_id)->where('users_id',$user_id)->first();
@@ -37,7 +39,7 @@ class Item extends Model
                     ->orWhere('desc->en', 'LIKE', '%'.$keyword.'%')
                     ->orWhere('desc->du', 'LIKE', '%'.$keyword.'%');
             })->get()->transform(function($item){
-                $item->img_route = route('item_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
+                $item->img_route = route('item_image', ['folder'=>'items','img' => $item->image, 'no_cache' => Str::random(4)]);
                 $item->discount_price = $item->price - ($item->price * $item->discount/100);
                 return $item;
             });;
