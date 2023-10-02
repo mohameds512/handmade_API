@@ -105,11 +105,18 @@ Route::group(['prefix' => 'flutter' ], function () {
 Route::group(['prefix' => 'admin' ], function () {
 
     Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'adminLogin']);
+
     Route::group(['middleware' => ['auth:api']], function()  {
 
         Route::post('listUsers', [UsersController::class, 'index']);
         Route::post('users/{id}', [UsersController::class, 'show']);
 
+        Route::post('listRoles',[RolesController::class, 'roles']);
+        Route::post('role/{role?}', [RolesController::class, 'getRole']);
+        // Route::put('{role?}', [RolesController::class, 'put']);
+        // Route::delete('{role}', [RolesController::class, 'delete']);
+        // Route::put('user/{user}', [RolesController::class, 'sync']);
+        // Route::get('user/{user}', [RolesController::class, 'user']);
         
     Route::group(['prefix'=>'notification'], function () {
         Route::post('sendNot',[FirebaseController::class,'sendNotification']);
@@ -250,12 +257,12 @@ Route::group(['middleware'=>['auth:api', 'json.response']], function () {
 
 Route::group(['prefix' => 'roles', 'middleware' => ['auth:api', 'json.response']], function () {
 
-    Route::post('', [RolesController::class, 'roles']);
-    Route::get('{role?}', [RolesController::class, 'get']);
-    Route::put('{role?}', [RolesController::class, 'put']);
-    Route::delete('{role}', [RolesController::class, 'delete']);
-    Route::put('user/{user}', [RolesController::class, 'sync']);
-    Route::get('user/{user}', [RolesController::class, 'user']);
+    // Route::post('', [RolesController::class, 'roles']);
+    // Route::get('{role?}', [RolesController::class, 'get']);
+    // Route::put('{role?}', [RolesController::class, 'put']);
+    // Route::delete('{role}', [RolesController::class, 'delete']);
+    // Route::put('user/{user}', [RolesController::class, 'sync']);
+    // Route::get('user/{user}', [RolesController::class, 'user']);
 
 });
 

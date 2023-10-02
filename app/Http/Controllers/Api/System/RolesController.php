@@ -17,10 +17,10 @@ use App\Models\User;
 
 class RolesController extends Controller {
 
-    public function __construct()
-    {
-//        $this->middleware('permission:access_roles');
-    }
+    // public function __construct()
+    // {
+    //    $this->middleware('permission:access_roles');
+    // }
 
     private static function permissionsGroups() {
 
@@ -53,8 +53,8 @@ class RolesController extends Controller {
         return success(['roles' => $roles, 'permissions' => $permissions, 'permissions_groups' => $permissionsGroups]);
     }
 
-    public function get(Request $request, Role $role) {
-
+    public function getRole(Request $request, Role $role) {
+        
 //        if (!can('show_roles')) return error(403);
 
         $permissions = $role->permissions()->pluck('name', 'id')->toArray();
