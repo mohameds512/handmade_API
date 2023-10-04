@@ -63,15 +63,15 @@ class RolesController extends Controller {
     }
 
     public function put(Request $request, Role $role = null) {
-
-        if (! Gate::allows('edit_roles')) {
-            abort(403);
-        }
+        
+        // if (! Gate::allows('edit_roles')) {
+        //     abort(403);
+        // }
 
         $validator = Validator::make($request->all(), [
             "name" => "required|unique:roles" . (($role) ? ",id,$role->id" : ""),
         ]);
-
+        
         if ($validator->fails())
             return vrrors($validator);
 
@@ -92,9 +92,9 @@ class RolesController extends Controller {
 
     public function delete(Request $request, Role $role) {
 
-        if (! Gate::allows('edit_roles')) {
-            abort(403);
-        }
+        // if (! Gate::allows('edit_roles')) {
+        //     abort(403);
+        // }
 
         if ($role->users()->count() > 0) return error(1005);
 
@@ -111,9 +111,9 @@ class RolesController extends Controller {
 
     public function user(Request $request, User $user) {
 
-        if (! Gate::allows('show_roles')) {
-            abort(403);
-        }
+        // if (! Gate::allows('show_roles')) {
+        //     abort(403);
+        // }
         $roles = $user->roles()->pluck('name', 'id')->toArray();
         $rolePermissions = $user->getPermissionsViaRoles()->pluck('name', 'id')->toArray();
         $directPermissions = $user->getDirectPermissions()->pluck('name', 'id')->toArray();
@@ -127,9 +127,9 @@ class RolesController extends Controller {
 
     public function sync(Request $request, User $user) {
 
-        if (! Gate::allows('edit_roles')) {
-            abort(403);
-        }
+        // if (! Gate::allows('edit_roles')) {
+        //     abort(403);
+        // }
         $user->syncPermissions($request->permissions);
         $user->syncRoles($request->roles);
 

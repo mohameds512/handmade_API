@@ -112,11 +112,12 @@ Route::group(['prefix' => 'admin' ], function () {
         Route::post('users/{id}', [UsersController::class, 'show']);
 
         Route::post('listRoles',[RolesController::class, 'roles']);
-        Route::post('role/{role?}', [RolesController::class, 'getRole']);
-        // Route::put('{role?}', [RolesController::class, 'put']);
-        // Route::delete('{role}', [RolesController::class, 'delete']);
-        // Route::put('user/{user}', [RolesController::class, 'sync']);
-        // Route::get('user/{user}', [RolesController::class, 'user']);
+        Route::put('addRole/{role?}', [RolesController::class, 'put']);    
+        Route::put('role/{role?}', [RolesController::class, 'getRole']);
+        
+        Route::delete('deleteRole/{role}', [RolesController::class, 'delete']);
+        Route::put('editRoles/user/{user}', [RolesController::class, 'sync']);
+        Route::get('roles/user/{user}', [RolesController::class, 'user']);
         
     Route::group(['prefix'=>'notification'], function () {
         Route::post('sendNot',[FirebaseController::class,'sendNotification']);
