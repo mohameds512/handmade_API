@@ -7,6 +7,7 @@ use App\Models\Coupon;
 use App\Http\Resources\flutter\orderResources;
 use Illuminate\Support\Str;
 use App\Models\Item;
+use App\Models\Rate;
 
 use Illuminate\Support\Facades\DB;
 
@@ -77,8 +78,9 @@ class OrderController extends Controller
         $data = (object)[];
         $items = Cart::where('cart_order_id',$request->order_id)
                     ->join('items','items.id','cart.item_id')
+                    ->leftJoin('rate','rate.id','cart.rate_id')
                     ->join('orders','orders.id','cart.cart_order_id')
-                    ->select('orders.order_code','items.*',DB::raw('SUM(items.price - (items.price*items.discount/100)) as all_price')
+                    ->select('rate.rating','orders.order_code','cart.cart_order_id','items.*',DB::raw('SUM(items.price - (items.price*items.discount/100)) as all_price')
                     ,DB::raw('COUNT(cart.item_id) item_count'))
                     ->groupBy('cart.item_id')
                     ->get()->transform(function($item){
@@ -111,11 +113,30 @@ class OrderController extends Controller
     }
 
     public function ratingOrder(Request $request){
-        $order = Order::where('id',$request->order_id)->first();
-        $order->rating = $request->rating;
-        $order->notes = $request->notes;
-        $order->save();
-        return \success();
+        DB::beginTransaction();
+        try {
+            $rate = New Rate();
+            $rate->rating = $request->rating;
+            $rate->notes = $request->notes;
+            $rate->save();
+
+            $carts = Cart::where('cart_order_id',$request->order_id)->where('item_id',$request->item_id)->get();
+            foreach ($carts as $cart) {
+                $cart->rate_id = $rate->id;
+                $cart->save();
+            }
+            DB::commit();
+            return \success();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+
+        }
+        // $order = Order::where('id',$request->order_id)->first();
+        // $order->rating = $request->rating;
+        // $order->notes = $request->notes;
+        // $order->save();
+        // return \success();
 
     }
 
