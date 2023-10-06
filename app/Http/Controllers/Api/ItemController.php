@@ -28,6 +28,7 @@ class ItemController extends Controller
         });
         return \success(['items'=>$items]);
     }
+    
     public function adminIndex(){
         $user_id =  Auth::user()->id;
 

@@ -7,10 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Str;
 
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+
 class CategoryController extends Controller
 {
     public function index(){
-        $categories = Category::get()->transform(function($item){
+        
+        $categories = Category::orderBy('id','DESC')->get()->transform(function($item){
             $item->img_route = route('category_image', ['img' => $item->image, 'no_cache' => Str::random(4)]);
             return $item;
         });
@@ -21,14 +25,16 @@ class CategoryController extends Controller
         if(!$category){
             $category = new Category();
         }
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image')) { 
             $file_image = $request->file('image');
             $image =Str::random(6);
             saveRequestFile($file_image, "$image", "categories");
+            $category->image = $image;
+
         }
         
-        $category->fill($request->all());
-        $category->image = $image;
+        $category->name = ["ar"=>$request->name_ar,"en"=>$request->name_en,"du"=>$request->name_du];
+        $category->desc =  ["ar"=>$request->desc_ar,"en"=>$request->desc_en,"du"=>$request->desc_du];
         $category->save();
         return response()->json(['message' => "success"], 201);
     }
